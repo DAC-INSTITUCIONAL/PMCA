@@ -6,9 +6,9 @@ const index = Number(process.env.CHUNK_INDEX);
 const total = Number(process.env.CHUNK_TOTAL);
 const chunk = process.env.CHUNK_DATA || "";
 
-if (!/^[A-Za-z0-9_-]{6,80}$/.test(syncId)) throw new Error("SYNC_ID invÃ¡lido");
-if (!Number.isInteger(index) || !Number.isInteger(total) || index < 0 || total < 1 || index >= total || total > 30) throw new Error("Ãndice de fragmento invÃ¡lido");
-if (!chunk || chunk.length > 60000) throw new Error("Contenido de fragmento invÃ¡lido");
+if (!/^[A-Za-z0-9_-]{6,80}$/.test(syncId)) throw new Error("SYNC_ID inválido");
+if (!Number.isInteger(index) || !Number.isInteger(total) || index < 0 || total < 1 || index >= total || total > 30) throw new Error("Índice de fragmento inválido");
+if (!chunk || chunk.length > 60000) throw new Error("Contenido de fragmento inválido");
 
 const syncDir = path.join(".sync", syncId);
 await fs.mkdir(syncDir, { recursive: true });
@@ -65,7 +65,7 @@ let holidays;
 
 if (Array.isArray(source)) {
   rawRecords = source.filter((row) => row && typeof row === "object" && !Array.isArray(row));
-  if (!rawRecords.length) throw new Error("La tabla del Excel no contiene filas vÃ¡lidas");
+  if (!rawRecords.length) throw new Error("La tabla del Excel no contiene filas válidas");
   originalHeaders = Object.keys(rawRecords[0]).filter((header) => !isSystemField(header));
   headers = originalHeaders.map(normalizeHeader);
   sourceName = previous.metadata?.sourceName || "Plan_de_Mejoras_Cualificacion_v2.xlsx";
@@ -85,15 +85,23 @@ if (Array.isArray(source)) {
   formulaIssue = source.formulaIssue || null;
   holidays = Array.isArray(source.holidays) ? source.holidays : [];
 } else {
-  throw new Error("Los datos recibidos desde Power Automate no son vÃ¡lidos");
+  throw new Error("Los datos recibidos desde Power Automate no son válidos");
 }
+
+const isPhase = (h) => h.trim().toLowerCase() === "fase";
+headers = headers.filter(h => !isPhase(h));
 
 const records = rawRecords
   .map((row, rowIndex) => ({ row, rowIndex }))
   .filter(({ row }) => originalHeaders.some((header) => row[header] !== null && row[header] !== ""))
   .map(({ row, rowIndex }) => {
     const record = { _excelRow: rowIndex + 2 };
-    originalHeaders.forEach((originalHeader, column) => { record[headers[column]] = row[originalHeader] ?? null; });
+    originalHeaders.forEach((originalHeader, column) => { 
+      const normHeader = normalizeHeader(originalHeader, column);
+      if (!isPhase(normHeader)) {
+        record[normHeader] = row[originalHeader] ?? null; 
+      }
+    });
     record["Fecha de inicio"] = excelDateToIso(record["Fecha de inicio"]);
     record["Fecha de fin"] = excelDateToIso(record["Fecha de fin"]);
     record["Avance (%)"] = Number.isFinite(Number(record["Avance (%)"])) ? Number(record["Avance (%)"]) : 0;

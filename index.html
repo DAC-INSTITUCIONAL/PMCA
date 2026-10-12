@@ -11,8 +11,10 @@
       color-scheme: light;
       --ink: #102a3d;
       --muted: #607487;
-      --navy: #082b4c;
-      --navy-2: #0d3c63;
+      --brand-red: #e20613;
+      --brand-red-dark: #b8050f;
+      --navy: #112337;
+      --navy-2: #1f3a56;
       --teal: #008f8c;
       --teal-soft: #dff4f1;
       --blue-soft: #e9f1f8;
@@ -26,7 +28,7 @@
       --canvas: #f3f6f8;
       --line: #d8e1e8;
       --line-strong: #b9c8d3;
-      --shadow: 0 12px 36px rgba(8, 43, 76, .09);
+      --shadow: 0 12px 36px rgba(17, 35, 55, .10);
       --radius: 16px;
     }
 
@@ -44,7 +46,7 @@
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
     button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
-      outline: 3px solid rgba(0, 143, 140, .28);
+      outline: 3px solid rgba(226, 6, 19, .30);
       outline-offset: 2px;
     }
 
@@ -59,8 +61,9 @@
       align-items: center;
       padding: 14px clamp(18px, 3vw, 42px);
       color: #fff;
-      background: linear-gradient(108deg, var(--navy) 0%, #0a365a 68%, #07566c 100%);
-      box-shadow: 0 8px 24px rgba(8, 43, 76, .16);
+      background: linear-gradient(108deg, var(--navy) 0%, #1a3350 100%);
+      border-bottom: 3px solid var(--brand-red);
+      box-shadow: 0 8px 24px rgba(17, 35, 55, .22);
     }
     .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
     .brand-mark {
@@ -75,6 +78,7 @@
       font-weight: 800;
       letter-spacing: -.04em;
     }
+    .brand-logo { display: block; height: 42px; width: auto; flex: 0 0 auto; }
     .brand-title { overflow: hidden; }
     .brand-title strong { display: block; font-size: .98rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .brand-title span { display: block; color: rgba(255,255,255,.7); font-size: .78rem; }
@@ -101,7 +105,8 @@
     .icon-btn:hover, .primary-btn:hover, .secondary-btn:hover, .ghost-btn:hover, .danger-btn:hover { transform: translateY(-1px); }
     .icon-btn { padding: 8px 12px; color: #fff; border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.1); }
     .icon-btn[data-dirty="true"]::after { content: ""; display: inline-block; width: 7px; height: 7px; margin-left: 7px; border-radius: 50%; background: #ffd15c; }
-    .primary-btn { padding: 9px 15px; color: #fff; background: var(--teal); }
+    .primary-btn { padding: 9px 15px; color: #fff; background: var(--brand-red); }
+    .primary-btn:hover { background: var(--brand-red-dark); }
     .secondary-btn { padding: 9px 15px; color: var(--navy); border-color: var(--line-strong); background: #fff; }
     .ghost-btn { padding: 8px 12px; color: var(--navy); background: transparent; }
     .danger-btn { padding: 9px 15px; color: #fff; background: var(--red); }
@@ -143,7 +148,7 @@
       white-space: nowrap;
     }
     .tab.active { color: var(--navy); }
-    .tab.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--teal); }
+    .tab.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--brand-red); }
     .tab-badge { margin-left: 6px; padding: 2px 7px; border-radius: 999px; background: var(--blue-soft); font-size: .72rem; }
 
     main { padding: 24px clamp(18px, 3vw, 42px) 48px; }
@@ -207,6 +212,8 @@
     .status-row { display: grid; grid-template-columns: minmax(112px, 1fr) 2.2fr 44px; gap: 10px; align-items: center; font-size: .84rem; }
     .bar-track { height: 9px; overflow: hidden; border-radius: 999px; background: #e8eef2; }
     .bar-fill { height: 100%; min-width: 0; border-radius: inherit; background: var(--navy-2); transition: width .35s ease; }
+    .bar-track.has-mark { position: relative; }
+    .bar-mark { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--navy); }
     .bar-fill.teal { background: var(--teal); }
     .bar-fill.amber { background: var(--amber); }
     .bar-fill.red { background: var(--red); }
@@ -246,9 +253,12 @@
     .table-wrap { overflow: auto; max-height: 68vh; background: #fff; }
     table { width: max-content; min-width: 100%; border-collapse: separate; border-spacing: 0; font-size: .82rem; }
     th, td { max-width: 320px; padding: 10px 12px; border-bottom: 1px solid var(--line); border-right: 1px solid #edf1f4; vertical-align: top; }
+    .sort-btn { all: unset; cursor: pointer; display: inline; color: inherit; font: inherit; }
+    .sort-btn:hover, .sort-btn:focus-visible { text-decoration: underline; }
+    .alert-item[data-deadline] { cursor: pointer; }
     th { position: sticky; z-index: 5; top: 0; color: #fff; background: var(--navy); text-align: left; font-size: .76rem; line-height: 1.25; }
     th:first-child, td:first-child { position: sticky; left: 0; z-index: 4; min-width: 82px; }
-    th:first-child { z-index: 7; background: #061f37; }
+    th:first-child { z-index: 7; background: #0a1624; }
     td:first-child { background: #f7fafb; font-weight: 800; color: var(--navy); }
     tbody tr:hover td { background-color: #f5faf9; }
     tbody tr:hover td:first-child { background-color: #edf7f5; }
@@ -275,6 +285,7 @@
     .mini-stat span { display: block; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .035em; }
     .mini-stat strong { color: var(--navy); font-size: .94rem; }
     .indicator-progress { display: grid; gap: 5px; }
+    .indicator-progress .muted { color: var(--muted); font-size: .72rem; }
 
     .stats-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
     .chart-list { display: grid; gap: 12px; }
@@ -361,6 +372,18 @@
       .data-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 620px) {
+      .table-wrap { max-height: none; }
+      .table-wrap table, .table-wrap tbody, .table-wrap tr, .table-wrap td { display: block; width: 100%; min-width: 0; max-width: none; }
+      .table-wrap thead { display: none; }
+      .table-wrap tbody tr { margin: 10px; width: auto; padding: 10px 12px; border: 1px solid var(--line); border-left: 5px solid var(--navy); border-radius: 10px; background: #fff; cursor: pointer; }
+      .table-wrap td, .table-wrap td:first-child { position: static; padding: 4px 0; border: 0; background: transparent !important; }
+      .table-wrap td::before { content: attr(data-label); display: block; color: var(--muted); font-size: .68rem; text-transform: uppercase; letter-spacing: .035em; }
+      .table-wrap td:not(.m-key) { display: none; }
+      .table-wrap tr.open td:not(.m-key) { display: block; }
+      .table-wrap tbody tr:not(.open)::after { content: "Toca para ver todos los campos"; display: block; padding-top: 6px; color: var(--teal); font-size: .72rem; }
+      .table-wrap td .cell-clamp { display: block; -webkit-line-clamp: unset; }
+      .table-wrap tr.open td .cell-clamp { max-height: none; }
+      .table-wrap td.empty { display: block; }
       .topbar { padding: 12px 14px; gap: 10px; }
       .brand-title span { display: none; }
       .top-actions .label { display: none; }
@@ -381,14 +404,17 @@
       .quality-item { grid-template-columns: 1fr; }
       .chart-row { grid-template-columns: minmax(115px, 1fr) 1.4fr 42px; }
       .data-grid { grid-template-columns: 1fr 1fr; }
+   
+
+</style>
     }
-  </style>
+      </style>
 </head>
 <body>
   <div class="shell">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">PM</div>
+        <img class="brand-logo" src="logo-ucacue.png" alt="Universidad Católica de Cuenca" width="124" height="42">
         <div class="brand-title">
           <strong>Plan de Mejoras para la Cualificación</strong>
           <span>Seguimiento operativo y cumplimiento</span>
@@ -408,6 +434,13 @@
       <span id="connectionDot" class="status-dot"></span>
       <strong id="connectionLabel">Datos públicos</strong>
       <span id="connectionDetail">Consulta habilitada sin iniciar sesión.</span>
+
+      <span style="margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--line); font-size: 0.8rem; color: var(--muted);">
+        <strong>Autor:</strong> Boris Poveda | Dirección de Aseguramiento de la Calidad
+      </span>
+
+
+      
       <span class="spacer"></span>
       <span id="accessBadge" class="badge">Solo consulta</span>
       <span id="dirtyLabel">Edición bloqueada</span>
@@ -473,18 +506,38 @@
         <div class="section-head">
           <div><h1 id="activitiesTitle">Consulta de actividades</h1><p id="activitiesHelp">La búsqueda superior revisa todas las columnas del plan.</p></div>
         </div>
-        <div class="filters">
-          <div class="field"><label for="phaseFilter">Fase</label><select id="phaseFilter"><option value="">Todas</option></select></div>
-          <div class="field"><label for="indicatorFilter">Indicador</label><select id="indicatorFilter"><option value="">Todos</option></select></div>
-          <div class="field"><label for="priorityFilter">Prioridad</label><select id="priorityFilter"><option value="">Todas</option></select></div>
-          <div class="field"><label for="statusFilter">Estado</label><select id="statusFilter"><option value="">Todos</option></select></div>
-          <div class="filter-actions"><button id="clearFiltersButton" class="ghost-btn" type="button">Limpiar filtros</button></div>
+        
+        <div class="filters" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="field">
+            <label for="indicatorFilter">Indicador</label>
+            <select id="indicatorFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="field">
+            <label for="responsibleFilter">Responsable</label>
+            <select id="responsibleFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="field">
+            <label for="priorityFilter">Prioridad</label>
+            <select id="priorityFilter"><option value="">Todas</option></select>
+          </div>
+          <div class="field">
+            <label for="statusFilter">Estado</label>
+            <select id="statusFilter"><option value="">Todos</option></select>
+          </div>
+          <div class="field">
+            <label for="deadlineFilter">Vencimiento</label>
+            <select id="deadlineFilter"><option value="">Todos</option><option value="Vencidas">Vencidas</option><option value="Por vencer (30 días)">Por vencer (30 días)</option></select>
+          </div>
+          <div class="filter-actions">
+            <button id="clearFiltersButton" class="ghost-btn" type="button">Limpiar filtros</button>
+          </div>
         </div>
         <article class="card table-card">
           <div class="table-toolbar">
             <strong id="resultCount">0 actividades</strong>
             <span id="filterSummary" class="card-sub">Sin filtros</span>
             <span class="spacer"></span>
+            <button id="exportCsvButton" class="secondary-btn small-btn" type="button" title="Descarga las actividades filtradas y ordenadas, con las columnas visibles">Exportar CSV</button>
             <button id="columnButton" class="secondary-btn small-btn" type="button">27 columnas</button>
           </div>
           <div id="activitiesTable" class="table-wrap"></div>
@@ -556,15 +609,21 @@
     (() => {
       "use strict";
 
-      let seed = JSON.parse(document.getElementById("seedData").textContent);
+      function withoutPhase(data) {
+        const isPhase = h => String(h).trim().toLowerCase() === "fase";
+        data.headers = data.headers.filter(h => !isPhase(h));
+        data.records.forEach(r => { delete r.Fase; });
+        return data;
+      }
+      let seed = withoutPhase(JSON.parse(document.getElementById("seedData").textContent));
       const TOKEN_KEY = "pmca-graph-token-v1";
       const PKCE_KEY = "pmca-pkce-v1";
       const PAGE_SIZE = 25;
       const graphBase = "https://graph.microsoft.com/v1.0";
       const oauthScopes = "openid profile offline_access User.Read Files.ReadWrite";
-      const keyColumns = ["ID", "Fase", "Criterio", "Indicador", "Elemento fundamental", "Actividad", "Responsable principal", "Fecha de inicio", "Fecha de fin", "Prioridad", "Estado", "Avance (%)", "Carga de Evidencias", "Nivel de Cumplimiento", "Observaciones"];
-      const longColumns = new Set(["Descripción del EF", "Fuente de información", "Descripción del Hallazgo", "Descripción de la actividad", "Medida de mitigación", "Producto / Entregable", "Medio de verificación", "Criterio de aceptación (evidencia de cumplimiento)", "Observaciones"]);
-      const mediumColumns = new Set(["Fase", "Criterio", "Indicador", "Actividad", "Responsable principal", "Carga de Evidencias"]);
+      const keyColumns = ["ID", "Criterio", "Indicador", "Elemento fundamental", "Actividad", "Responsable principal", "Fecha de inicio", "Fecha de fin", "Prioridad", "Estado", "Avance (%)", "Carga de Evidencias", "Nivel de Cumplimiento", "Observaciones"];      const longColumns = new Set(["Descripción del EF", "Fuente de información", "Descripción del Hallazgo", "Descripción de la actividad", "Medida de mitigación", "Producto / Entregable", "Medio de verificación", "Criterio de aceptación (evidencia de cumplimiento)", "Observaciones"]);
+      const mediumColumns = new Set(["Criterio", "Indicador", "Actividad", "Responsable principal", "Carga de Evidencias"]);
+      const mobileColumns = new Set(["ID", "Indicador", "Actividad", "Responsable principal", "Fecha de fin", "Prioridad", "Estado", "Avance (%)"]);
       const dateColumns = new Set(["Fecha de inicio", "Fecha de fin"]);
       const numericColumns = new Set(["Plazo (días)", "Avance (%)"]);
       const readOnlyColumns = new Set(["Plazo (días)"]);
@@ -581,7 +640,8 @@
         base: new Map(),
         dirty: new Map(),
         search: "",
-        filters: { phase: "", indicator: "", priority: "", status: "" },
+        filters: { indicator: "", priority: "", status: "", responsible: "", deadline: "" },
+        sort: { field: "", dir: "asc" },
         page: 1,
         activeView: "overview",
         visibleColumns: new Set(seed.headers),
@@ -613,7 +673,6 @@
       function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
       function avg(values) { const nums = values.filter(Number.isFinite); return nums.length ? nums.reduce((a,b) => a+b, 0) / nums.length : 0; }
       function unique(values) { return [...new Set(values.filter(value => plain(value) !== ""))]; }
-      function phaseCode(value) { return plain(value).match(/^F\d+/i)?.[0]?.toUpperCase() || "Sin fase"; }
       function parseDate(value) { return value ? new Date(`${value}T00:00:00Z`) : null; }
       function fmtDate(value) { const date = parseDate(value); return date && !Number.isNaN(date.valueOf()) ? dateFmt.format(date) : "—"; }
       function excelDateToIso(serial) { if (!Number.isFinite(Number(serial))) return plain(serial); return new Date(Date.UTC(1899, 11, 30) + Number(serial) * 86400000).toISOString().slice(0,10); }
@@ -622,6 +681,29 @@
       function activityAdvance(record) { const value = Number(record["Avance (%)"]); return Number.isFinite(value) ? clamp(value, 0, 100) : 0; }
       function operationalLevel(value) { if (value >= 100) return "Completada"; if (value >= 75) return "Avance alto"; if (value >= 50) return "Avance medio"; if (value > 0) return "Avance inicial"; return "No iniciada"; }
       function isOverdue(record) { const end = parseDate(record["Fecha de fin"]); if (!end || activityAdvance(record) >= 100) return false; const today = new Date(); const utcToday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())); return end < utcToday; }
+      function expectedAdvance(record) {
+        const start = parseDate(record["Fecha de inicio"]), end = parseDate(record["Fecha de fin"]);
+        if (!start || !end || end < start) return null;
+        const now = new Date(), today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+        if (today <= start) return 0;
+        if (today >= end) return 100;
+        return (today - start) / (end - start) * 100;
+      }
+      function scheduleStats(rows) {
+        const dated = rows.filter(r => expectedAdvance(r) !== null);
+        const real = avg(rows.map(activityAdvance));
+        const expected = dated.length ? avg(dated.map(expectedAdvance)) : null;
+        return { real, expected, gap: expected === null ? null : real - expected, overdue: rows.filter(isOverdue).length };
+      }
+      function gapBadge(gap) {
+        if (gap === null) return `<span class="badge">Sin fechas</span>`;
+        const cls = gap >= -5 ? "green" : gap >= -20 ? "amber" : "red";
+        const text = gap >= -5 ? "En ritmo" : gap >= -20 ? "Rezago leve" : "Rezago alto";
+        return `<span class="badge ${cls}" title="Avance real menos avance esperado">${text} (${gap > 0 ? "+" : ""}${percentFmt.format(gap)} pts)</span>`;
+      }
+      function progressBar(real, expected, color) {
+        return `<div class="bar-track has-mark"><div class="bar-fill ${color}" style="width:${real}%"></div>${expected === null ? "" : `<div class="bar-mark" style="left:calc(${expected}% - 1px)" title="Esperado a hoy: ${percentFmt.format(expected)}%"></div>`}</div>`;
+      }
       function isDueSoon(record) { const end = parseDate(record["Fecha de fin"]); if (!end || activityAdvance(record) >= 100) return false; const today = new Date(); const utcToday = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()); const diff = (end.getTime() - utcToday) / 86400000; return diff >= 0 && diff <= 30; }
       function businessDays(startIso, endIso) {
         const start = parseDate(startIso), end = parseDate(endIso);
@@ -714,6 +796,7 @@
             rows,
             activities: rows.length,
             advance: avg(rows.map(activityAdvance)),
+            schedule: scheduleStats(rows),
             critical: rows.filter(r => norm(r.Prioridad) === "critica").length,
             ef: unique(rows.map(r => r["Elemento fundamental"]).filter(v => v !== "NA")).length,
             start: rows.map(r => r["Fecha de inicio"]).filter(Boolean).sort()[0],
@@ -737,9 +820,6 @@
         if (duplicates.length) issues.push({ severity: "critical", title: "Identificadores duplicados", detail: duplicates.map(([id, rows]) => `${id} en filas ${rows.join(" y ")}`).join("; "), count: duplicates.length });
         if (seed.metadata?.blankHeaderColumns?.length) issues.push({ severity: "warning", title: "Encabezado original sin nombre", detail: `Columnas sin encabezado: ${seed.metadata.blankHeaderColumns.join(", ")}.`, count: seed.metadata.blankHeaderColumns.length });
         if (seed.metadata?.formulaIssue) issues.push({ severity: "critical", title: "Fórmulas de plazo vinculadas a una referencia externa", detail: seed.metadata.formulaIssue, count: state.records.length });
-        const phaseVariants = unique(state.records.map(r => r.Fase)).length;
-        const phaseCodes = unique(state.records.map(r => phaseCode(r.Fase))).length;
-        if (phaseVariants > phaseCodes) issues.push({ severity: "warning", title: "Nombres de fase no estandarizados", detail: `${phaseVariants} textos distintos representan ${phaseCodes} fases generales. Existen diferencias de espacios, meses y años.`, count: phaseVariants });
         const required = ["ID", "Indicador", "Actividad", "Responsable principal", "Fecha de inicio", "Fecha de fin", "Producto / Entregable", "Medio de verificación", "Criterio de aceptación (evidencia de cumplimiento)", "Prioridad", "Estado", "Avance (%)"];
         const incomplete = state.records.filter(record => required.some(field => record[field] === null || plain(record[field]) === ""));
         if (incomplete.length) issues.push({ severity: "critical", title: "Actividades con campos esenciales incompletos", detail: `Filas Excel: ${incomplete.slice(0,12).map(r => r._excelRow).join(", ")}${incomplete.length > 12 ? "…" : ""}.`, count: incomplete.length });
@@ -784,13 +864,14 @@
         const indicators = aggregateIndicators(records);
         const overall = avg(records.map(activityAdvance));
         const completed = records.filter(r => activityAdvance(r) >= 100).length;
+        const schedule = scheduleStats(records);
         const overdue = records.filter(isOverdue).length;
         const critical = records.filter(r => norm(r.Prioridad) === "critica").length;
         const traceable = records.filter(r => plain(r["Medio de verificación"]) && plain(r["Criterio de aceptación (evidencia de cumplimiento)"]) && plain(r["Carga de Evidencias"])).length;
         const manualIndicators = indicators.filter(i => i.compliance !== "Sin valoración").length;
         const kpis = [
           [records.length, "Actividades", `${records.length} filas de seguimiento`, ""],
-          [`${percentFmt.format(overall)}%`, "Avance promedio", `${completed} completadas`, "teal"],
+          [`${percentFmt.format(overall)}%`, "Avance promedio", `${completed} completadas${schedule.expected === null ? "" : ` · esperado ${percentFmt.format(schedule.expected)}%`}`, "teal"],
           [indicators.length, "Indicadores", `${indicators.length} agrupaciones detectadas`, ""],
           [critical, "Prioridad crítica", `${percentFmt.format(records.length ? critical / records.length * 100 : 0)}% del plan`, "red"],
           [overdue, "Vencidas", overdue ? "Requieren acción" : "Sin vencimientos al corte", overdue ? "red" : "green"],
@@ -815,15 +896,15 @@
         const alerts = [
           { title: "Nivel de cumplimiento pendiente", detail: `${records.filter(r => !plain(r["Nivel de Cumplimiento"])).length} actividades sin valoración manual`, count: manualIndicators, cls: "critical" },
           { title: "Fórmulas de plazo", detail: "Referencia externa detectada en el Excel", count: Math.max(0, records.length - 1), cls: "critical" },
-          { title: "Próximos 30 días", detail: "Actividades que vencen pronto", count: records.filter(isDueSoon).length, cls: "info" },
+          { title: "Vencidas", detail: "Actividades fuera de plazo y sin completar. Clic para ver el listado", count: overdue, cls: overdue ? "critical" : "", deadline: "Vencidas" },
+          { title: "Próximos 30 días", detail: "Actividades que vencen pronto. Clic para ver el listado", count: records.filter(isDueSoon).length, cls: "info", deadline: "Por vencer (30 días)" },
           { title: "Calidad de datos", detail: `${issues.length} controles con observaciones`, count: issues.length, cls: "" }
         ];
-        $("#priorityAlerts").innerHTML = alerts.map(a => `<div class="alert-item ${a.cls}"><div><strong>${esc(a.title)}</strong><p>${esc(a.detail)}</p></div><span class="alert-count">${a.count}</span></div>`).join("");
+        $("#priorityAlerts").innerHTML = alerts.map(a => `<div class="alert-item ${a.cls}"${a.deadline ? ` data-deadline="${esc(a.deadline)}" role="button" tabindex="0"` : ""}><div><strong>${esc(a.title)}</strong><p>${esc(a.detail)}</p></div><span class="alert-count">${a.count}</span></div>`).join("");
         const minDate = records.map(r => r["Fecha de inicio"]).filter(Boolean).sort()[0];
         const maxDate = records.map(r => r["Fecha de fin"]).filter(Boolean).sort().at(-1);
-        const phases = unique(records.map(r => phaseCode(r.Fase))).length;
         const efCount = unique(records.map(r => r["Elemento fundamental"]).filter(v => v && v !== "NA")).length;
-        $("#planningSummary").innerHTML = [[fmtDate(minDate),"Inicio"],[fmtDate(maxDate),"Cierre"],[phases,"Fases"],[efCount,"EF únicos"]].map(([v,l]) => `<div class="data-stat"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("");
+        $("#planningSummary").innerHTML = [[fmtDate(minDate),"Inicio"],[fmtDate(maxDate),"Cierre"],[efCount,"EF únicos"]].map(([v,l]) => `<div class="data-stat"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("");
       }
 
       function renderIndicators() {
@@ -836,34 +917,60 @@
             <div class="mini-stat"><span>Actividades</span><strong>${item.activities}</strong></div>
             <div class="mini-stat"><span>EF únicos</span><strong>${item.ef || "—"}</strong></div>
             <div class="mini-stat"><span>Críticas</span><strong>${item.critical}</strong></div>
-            <div class="indicator-progress"><span class="badge ${item.advance >= 100 ? "green" : item.advance > 0 ? "amber" : "red"}">${esc(level)}</span><div class="bar-track"><div class="bar-fill teal" style="width:${item.advance}%"></div></div></div>
+            <div class="indicator-progress"><span class="badge ${item.advance >= 100 ? "green" : item.advance > 0 ? "amber" : "red"}">${esc(level)}</span>${progressBar(item.advance, item.schedule.expected, "teal")}<small class="muted">Real ${percentFmt.format(item.advance)}%${item.schedule.expected === null ? "" : ` · Esperado ${percentFmt.format(item.schedule.expected)}%`}</small>${gapBadge(item.schedule.gap)}</div>
             <span class="badge ${badgeClass}">${esc(item.compliance)}</span>
           </article>`;
         }).join("") : `<div class="card empty">Inicia sesión con Microsoft 365 para cargar los indicadores.</div>`;
       }
 
       function filteredRecords() {
-        const query = norm(state.search);
-        return state.records.filter(record => {
-          if (query && !seed.headers.some(field => norm(record[field]).includes(query))) return false;
-          if (state.filters.phase && phaseCode(record.Fase) !== state.filters.phase) return false;
-          if (state.filters.indicator && record.Indicador !== state.filters.indicator) return false;
-          if (state.filters.priority && record.Prioridad !== state.filters.priority) return false;
-          if (state.filters.status && record.Estado !== state.filters.status) return false;
-          return true;
+  const query = norm(state.search);
+  return state.records.filter(record => {
+    if (query && !seed.headers.some(field => norm(record[field]).includes(query))) return false;
+    if (state.filters.indicator && record.Indicador !== state.filters.indicator) return false;
+    if (state.filters.priority && record.Prioridad !== state.filters.priority) return false;
+    if (state.filters.status && record.Estado !== state.filters.status) return false;
+    if (state.filters.responsible) {
+      const respList = splitResponsible(record).map(norm);
+      if (!respList.includes(norm(state.filters.responsible))) return false;
+    }
+    if (state.filters.deadline === "Vencidas" && !isOverdue(record)) return false;
+    if (state.filters.deadline === "Por vencer (30 días)" && !isDueSoon(record)) return false;
+    return true;
+  });
+}
+
+      function sortedRecords(records) {
+        const { field, dir } = state.sort;
+        const sortField = field || (state.filters.deadline ? "Fecha de fin" : "");
+        if (!sortField) return records;
+        const factor = dir === "desc" && field ? -1 : 1;
+        const key = r => sortField === "Avance (%)" ? activityAdvance(r) : numericColumns.has(sortField) ? (Number.isFinite(Number(r[sortField])) && plain(r[sortField]) !== "" ? Number(r[sortField]) : null) : plain(r[sortField]);
+        return [...records].sort((a, b) => {
+          const ka = key(a), kb = key(b);
+          if ((ka === null || ka === "") !== (kb === null || kb === "")) return ka === null || ka === "" ? 1 : -1;
+          if (typeof ka === "number" && typeof kb === "number") return (ka - kb) * factor;
+          return collator.compare(String(ka), String(kb)) * factor;
         });
       }
 
       function renderFilterOptions() {
+        const allResponsibles = unique(
+          state.records.flatMap(r => splitResponsible(r))
+        ).sort(collator.compare);
         const sets = {
-          phaseFilter: unique(state.records.map(r => phaseCode(r.Fase))).sort(collator.compare),
           indicatorFilter: unique(state.records.map(r => r.Indicador)).sort(collator.compare),
+          responsibleFilter: allResponsibles,
           priorityFilter: unique(state.records.map(r => r.Prioridad)).sort(collator.compare),
           statusFilter: unique(state.records.map(r => r.Estado)).sort(collator.compare)
         };
+
+        const filterKeys = { indicatorFilter: "indicator", responsibleFilter: "responsible", priorityFilter: "priority", statusFilter: "status" };
+        $("#deadlineFilter").value = state.filters.deadline;
         for (const [id, values] of Object.entries(sets)) {
           const select = document.getElementById(id);
-          const current = select.value;
+          if (!select) continue;
+          const current = state.filters[filterKeys[id]] ?? select.value;
           const label = select.options[0].textContent;
           select.innerHTML = `<option value="">${esc(label)}</option>` + values.map(value => `<option value="${esc(value)}">${esc(value)}</option>`).join("");
           select.value = current;
@@ -883,18 +990,18 @@
         const filtered = filteredRecords();
         const pages = 1;
         state.page = 1;
-        const slice = filtered;
+        const slice = sortedRecords(filtered);
         const visible = seed.headers.filter(field => state.visibleColumns.has(field));
         const actionHeader = isEditor() ? `<th scope="col">Acción</th>` : "";
-        const header = `<thead><tr>${visible.map(field => `<th scope="col">${esc(field)}</th>`).join("")}${actionHeader}</tr></thead>`;
+        const header = `<thead><tr>${visible.map(field => `<th scope="col" aria-sort="${state.sort.field === field ? (state.sort.dir === "asc" ? "ascending" : "descending") : "none"}"><button type="button" class="sort-btn" data-sort="${esc(field)}" title="Ordenar por ${esc(field)}">${esc(field)}<span aria-hidden="true">${state.sort.field === field ? (state.sort.dir === "asc" ? " ▲" : " ▼") : ""}</span></button></th>`).join("")}${actionHeader}</tr></thead>`;
         const body = slice.length ? `<tbody>${slice.map(record => `<tr>${visible.map(field => {
           const value = displayCell(record, field);
-          const cls = longColumns.has(field) ? "long" : mediumColumns.has(field) ? "medium" : numericColumns.has(field) ? "number" : "";
+          const cls = [longColumns.has(field) ? "long" : mediumColumns.has(field) ? "medium" : numericColumns.has(field) ? "number" : "", mobileColumns.has(field) ? "m-key" : ""].filter(Boolean).join(" ");
           let content = `<span class="cell-clamp" title="${esc(value)}">${esc(value)}</span>`;
           if (field === "Prioridad") content = `<span class="badge ${norm(value) === "critica" ? "red" : norm(value) === "alta" ? "amber" : ""}">${esc(value)}</span>`;
           if (field === "Estado") content = `<span class="badge ${activityAdvance(record) >= 100 ? "green" : activityAdvance(record) > 0 ? "amber" : "red"}">${esc(value)}</span>`;
           if (field === "Nivel de Cumplimiento") content = `<span class="badge ${norm(value) === "cumple" ? "green" : norm(value) === "no cumple" ? "red" : ""}">${esc(value)}</span>`;
-          return `<td class="${cls}">${content}</td>`;
+          return `<td class="${cls}" data-label="${esc(field)}">${content}</td>`;
         }).join("")}${isEditor() ? `<td><div class="row-actions"><button class="edit-link" type="button" data-edit-row="${record._excelRow}">Editar</button></div></td>` : ""}</tr>`).join("")}</tbody>` : `<tbody><tr><td colspan="${visible.length + (isEditor() ? 1 : 0)}" class="empty">No existen actividades que coincidan con la búsqueda y los filtros.</td></tr></tbody>`;
         $("#activitiesTable").innerHTML = `<table>${header}${body}</table>`;
         $("#activitiesTitle").textContent = isEditor() ? "Consulta y edición de actividades" : "Consulta de actividades";
@@ -905,12 +1012,19 @@
         $("#pageSummary").textContent = `Página ${state.page} de ${pages}`;
         $("#prevPage").disabled = state.page <= 1;
         $("#nextPage").disabled = state.page >= pages;
+        writeUrlState();
         $("#columnButton").textContent = `${visible.length} de ${seed.headers.length} columnas`;
       }
 
       function barCard(title, subtitle, entries, color = "") {
         const max = Math.max(...entries.map(([,value]) => value), 1);
         return `<article class="card"><div class="card-head"><div><h3>${esc(title)}</h3><div class="card-sub">${esc(subtitle)}</div></div></div><div class="chart-list">${entries.map(([label,value]) => `<div class="chart-row" title="${esc(label)}"><span class="label">${esc(label)}</span><div class="bar-track"><div class="bar-fill ${color}" style="width:${value/max*100}%"></div></div><span class="bar-value">${intFmt.format(value)}</span></div>`).join("")}</div></article>`;
+      }
+
+      function scheduleCard(title, subtitle, groups) {
+        const rows = groups.map(([label, recs]) => ({ label, ...scheduleStats(recs), count: recs.length }))
+          .sort((a, b) => (a.gap ?? 0) - (b.gap ?? 0));
+        return `<article class="card"><div class="card-head"><div><h3>${esc(title)}</h3><div class="card-sub">${esc(subtitle)}</div></div></div><div class="chart-list">${rows.map(r => `<div class="chart-row" title="${esc(r.label)}"><span class="label">${esc(r.label)} (${r.count})</span>${progressBar(r.real, r.expected, "teal")}<span class="badge ${r.overdue ? "red" : "green"}" title="Actividades vencidas">${r.overdue}</span></div>`).join("")}</div><div class="card-sub">Barra = avance real · marca = esperado a hoy · insignia = vencidas</div></article>`;
       }
 
       function pieCard(title, subtitle, levels, total) {
@@ -929,10 +1043,11 @@
 
       function renderStatistics() {
         const priorities = countBy(state.records, "Prioridad");
-        const phases = countBy(state.records, "Fase", value => phaseCode(value));
         const indicators = aggregateIndicators().map(i => [i.name, i.activities]);
         const unitMap = new Map();
         for (const record of state.records) for (const unit of splitResponsible(record)) unitMap.set(unit, (unitMap.get(unit) || 0) + 1);
+        const unitGroups = new Map();
+        for (const record of state.records) for (const unit of splitResponsible(record)) { if (!unitGroups.has(unit)) unitGroups.set(unit, []); unitGroups.get(unit).push(record); }
         const units = [...unitMap.entries()].sort((a,b) => b[1]-a[1] || collator.compare(a[0], b[0])).slice(0,12);
         const months = new Map();
         for (const record of state.records) {
@@ -953,7 +1068,7 @@
           pieCard("Porcentaje de actividades", "Distribución según el avance registrado", progressLevels, state.records.length),
           barCard("Prioridades", "Cantidad de actividades por prioridad", priorities, "amber"),
           barCard("Carga por indicador", "Número de actividades asignadas", indicators, "teal"),
-          barCard("Fases generales", "Agrupación por código F0–F3", phases, ""),
+          scheduleCard("Cronograma por responsable", "Avance real frente al esperado según fechas; ordenado de mayor a menor rezago", [...unitGroups.entries()]),
           barCard("Unidades con mayor participación", "Cada línea de responsable se cuenta como una unidad", units, "teal"),
           barCard("Inicio de actividades", "Actividades programadas por mes", monthEntries, "amber")
         ].join("");
@@ -965,7 +1080,7 @@
         const totalCells = state.records.length * seed.headers.length;
         const completeness = totalCells ? 1 - missingCells / totalCells : 0;
         const duplicateCount = state.records.length - unique(state.records.map(r => r.ID)).length;
-        $("#qualitySummary").innerHTML = [[`${percentFmt.format(completeness*100)}%`,"Completitud global"],[issues.length,"Controles con observación"],[duplicateCount,"ID duplicados"],[unique(state.records.map(r=>r.Fase)).length,"Variantes de fase"]].map(([v,l]) => `<div class="data-stat"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("");
+        $("#qualitySummary").innerHTML = [[`${percentFmt.format(completeness*100)}%`,"Completitud global"],[issues.length,"Controles con observación"],[duplicateCount,"ID duplicados"]].map(([v,l]) => `<div class="data-stat"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("");
         $("#qualityGrid").innerHTML = issues.map(issue => `<article class="quality-item"><span class="severity ${issue.severity}">${issue.severity === "critical" ? "Crítico" : issue.severity === "warning" ? "Revisar" : "Informativo"}</span><div><h3>${esc(issue.title)}</h3><p>${esc(issue.detail)}</p></div><span class="alert-count">${issue.count}</span></article>`).join("");
       }
 
@@ -1009,11 +1124,61 @@
         $$('[data-editor-only]').forEach(element => { element.hidden = !isEditor(); });
       }
 
+      const URL_FILTER_KEYS = { q: "search", indicador: "indicator", responsable: "responsible", prioridad: "priority", estado: "status", vencimiento: "deadline" };
+      function readUrlState() {
+        const params = new URLSearchParams(location.search);
+        for (const [param, key] of Object.entries(URL_FILTER_KEYS)) {
+          const value = params.get(param) || "";
+          if (key === "search") state.search = value; else state.filters[key] = value;
+        }
+        $("#globalSearch").value = state.search;
+        const sortField = params.get("orden");
+        if (sortField && seed.headers.includes(sortField)) state.sort = { field: sortField, dir: params.get("dir") === "desc" ? "desc" : "asc" };
+        const view = params.get("vista");
+        return $$(".tab").some(tab => tab.dataset.view === view) ? view : "";
+      }
+      function writeUrlState() {
+        try {
+          const params = new URLSearchParams(location.search);
+          for (const [param, key] of Object.entries(URL_FILTER_KEYS)) {
+            const value = key === "search" ? state.search : state.filters[key];
+            if (value) params.set(param, value); else params.delete(param);
+          }
+          if (state.sort.field) { params.set("orden", state.sort.field); params.set("dir", state.sort.dir); } else { params.delete("orden"); params.delete("dir"); }
+          if (state.activeView !== "overview") params.set("vista", state.activeView); else params.delete("vista");
+          const query = params.toString();
+          history.replaceState(null, "", location.pathname + (query ? "?" + query : "") + location.hash);
+        } catch { /* file:// o entornos sin History API */ }
+      }
+
+      function csvCell(value) {
+        let text = String(value ?? "");
+        if (/^[=+@]|^-(?!\d)/.test(text)) text = "'" + text;
+        return /[";\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+      }
+      function exportCsv() {
+        const headers = seed.headers.filter(field => state.visibleColumns.has(field));
+        const rows = sortedRecords(filteredRecords());
+        if (!rows.length) { toast("No hay actividades para exportar con los filtros actuales.", "error"); return; }
+        const value = (record, field) => field === "Avance (%)" ? activityAdvance(record) :  record[field];
+        const lines = [headers.map(csvCell).join(";"), ...rows.map(record => headers.map(field => csvCell(value(record, field))).join(";"))];
+        const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `plan-actividades-${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        toast(`Se exportaron ${rows.length} actividades.`, "success");
+      }
+
       function showView(name) {
         state.activeView = name;
         $$(".tab").forEach(tab => tab.classList.toggle("active", tab.dataset.view === name));
         $$(".view").forEach(view => view.classList.toggle("active", view.id === `view-${name}`));
         if (name === "activities") renderActivities();
+        writeUrlState();
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
@@ -1036,7 +1201,7 @@
 
       function fieldControl(field, value) {
         const id = `field-${seed.headers.indexOf(field)}`;
-        const full = longColumns.has(field) || field === "Responsable principal" || field === "Fase";
+        const full = longColumns.has(field) || field === "Responsable principal";
         const readonly = readOnlyColumns.has(field);
         let control = "";
         if (readonly) control = `<input id="${id}" name="${esc(field)}" value="${esc(displayCell({[field]: value}, field))}" readonly>`;
@@ -1096,10 +1261,10 @@
         if (!data || !Array.isArray(data.headers) || !Array.isArray(data.records) || !data.headers.length) throw new Error("Los datos públicos no tienen una estructura válida.");
         const signature = JSON.stringify(data.records);
         if (signature === publishedSignature) return false;
-        seed = data;
+        seed = withoutPhase(data);
         publishedSignature = signature;
         state.records = data.records.map(normalizeRecord);
-        state.visibleColumns = new Set(data.headers);
+        state.visibleColumns = new Set(seed.headers);
         state.page = 1;
         snapshotBase();
         if (notify) {
@@ -1430,9 +1595,48 @@
         $$(".tab").forEach(tab => tab.addEventListener("click", () => showView(tab.dataset.view)));
         $$('[data-go]').forEach(button => button.addEventListener("click", () => showView(button.dataset.go)));
         $("#globalSearch").addEventListener("input", event => { state.search = event.target.value; state.page = 1; if (state.activeView !== "activities") showView("activities"); else renderActivities(); });
-        [["phaseFilter","phase"],["indicatorFilter","indicator"],["priorityFilter","priority"],["statusFilter","status"]].forEach(([id,key]) => $("#"+id).addEventListener("change", event => { state.filters[key] = event.target.value; state.page = 1; renderActivities(); }));
-        $("#clearFiltersButton").addEventListener("click", () => { state.filters = {phase:"",indicator:"",priority:"",status:""}; state.search=""; $("#globalSearch").value=""; state.page=1; renderActivities(); });
-        $("#activitiesTable").addEventListener("click", event => { const button = event.target.closest("[data-edit-row]"); if (button) openEdit(button.dataset.editRow); });
+        [["indicatorFilter","indicator"],["responsibleFilter","responsible"],["priorityFilter","priority"],["statusFilter","status"],["deadlineFilter","deadline"]].forEach(([id,key]) => {
+          const el = $("#"+id);
+          if (el) {
+            el.addEventListener("change", event => { 
+              state.filters[key] = event.target.value; 
+              state.page = 1; 
+              renderActivities(); 
+            });
+          }
+        });        
+        $("#clearFiltersButton").addEventListener("click", () => { 
+          state.filters = { indicator: "", responsible: "", priority: "", status: "", deadline: "" }; 
+          state.search = ""; 
+          $("#globalSearch").value = ""; 
+          state.page = 1; 
+          renderActivities(); 
+        });
+        const openDeadline = event => {
+          const item = event.target.closest("[data-deadline]");
+          if (!item || (event.type === "keydown" && event.key !== "Enter")) return;
+          state.filters = { indicator: "", responsible: "", priority: "", status: "", deadline: item.dataset.deadline };
+          state.search = ""; $("#globalSearch").value = "";
+          state.sort = { field: "", dir: "asc" };
+          showView("activities");
+        };
+        $("#priorityAlerts").addEventListener("click", openDeadline);
+        $("#priorityAlerts").addEventListener("keydown", openDeadline);
+        $("#activitiesTable").addEventListener("click", event => {
+          const sortButton = event.target.closest("[data-sort]");
+          if (sortButton) {
+            const field = sortButton.dataset.sort;
+            if (state.sort.field !== field) state.sort = { field, dir: "asc" };
+            else if (state.sort.dir === "asc") state.sort.dir = "desc";
+            else state.sort = { field: "", dir: "asc" };
+            renderActivities();
+            return;
+          }
+          const button = event.target.closest("[data-edit-row]");
+          if (button) { openEdit(button.dataset.editRow); return; }
+          const row = event.target.closest("tbody tr");
+          if (row && window.matchMedia("(max-width: 620px)").matches) row.classList.toggle("open");
+        });
         $("#prevPage").addEventListener("click", () => { state.page--; renderActivities(); });
         $("#nextPage").addEventListener("click", () => { state.page++; renderActivities(); });
         $("#editForm").addEventListener("submit", saveEdit);
@@ -1441,6 +1645,7 @@
         $("#refreshButton").addEventListener("click", () => refreshFromWorkbook().catch(handleError));
         $("#syncButton").addEventListener("click", () => syncAll().catch(handleError));
         $("#columnButton").addEventListener("click", openColumns);
+        $("#exportCsvButton").addEventListener("click", exportCsv);
         $("#columnDialog").addEventListener("close", applyColumns);
         $("#showAllColumns").addEventListener("click", () => $$('#columnOptions input').forEach(input => input.checked = true));
         $("#showKeyColumns").addEventListener("click", () => $$('#columnOptions input').forEach(input => input.checked = keyColumns.includes(input.value)));
@@ -1452,7 +1657,9 @@
         await Promise.all([loadPublishedData(), loadDeploymentConfig()]);
         bindEvents();
         registerWebMcp();
+        const initialView = readUrlState();
         renderAll();
+        if (initialView) showView(initialView);
         try {
           await handleOauthCallback();
           if (state.graph.accessToken && state.graph.accessMode === "unknown") await connectWorkbook();
@@ -1464,6 +1671,7 @@
 
       init();
     })();
+  
   </script>
 </body>
 </html>
