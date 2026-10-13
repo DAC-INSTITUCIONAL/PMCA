@@ -11,17 +11,18 @@ en SharePoint Online o OneDrive para la Empresa.
 ## 1. Configuración terminada
 
 `microsoft365.config.json` ya contiene el inquilino, la aplicación SPA, el
-enlace institucional del Excel, la hoja y el Object ID del único administrador.
+enlace institucional del Excel, la hoja y el correo de la cuenta administradora
+(`institucional.jaac@ucacue.edu.ec`).
 No es necesario cambiarlo para esta publicación.
 
-La configuración es cerrada por defecto: una cuenta cuyo Object ID no coincida
+La configuración es cerrada por defecto: una cuenta cuyo correo u Object ID no coincida
 con el autorizado no puede activar la edición.
 
 ## 2. Registrar la aplicación en Microsoft Entra ID
 
 Registra como URI de redirección de tipo SPA la dirección exacta:
 
-`https://borispoveda316.github.io/PMCA/`
+`https://dac-institucional.github.io/PMCA/`
 
 Agrega los permisos delegados de Microsoft Graph `User.Read` y
 `Files.ReadWrite`. No agregues un secreto al HTML.
@@ -47,7 +48,7 @@ del repositorio.
 
 ## 4. Publicar
 
-Sube estos cuatro archivos a la raíz del repositorio `PMCA`:
+Sube estos cuatro archivos a la raíz del repositorio `DAC-INSTITUCIONAL/PMCA`:
 
 - `index.html`
 - `microsoft365.config.json`
@@ -57,7 +58,7 @@ Sube estos cuatro archivos a la raíz del repositorio `PMCA`:
 En GitHub abre **Settings → Pages**, selecciona **Deploy from a branch**, la
 rama `main` y la carpeta `/ (root)`. La dirección pública será:
 
-`https://borispoveda316.github.io/PMCA/`
+`https://dac-institucional.github.io/PMCA/`
 
 GitHub Pages es un alojamiento estático. Cuando cambie el Excel, la sesión del
 administrador podrá leer y editar la versión vigente, pero los demás visitantes
