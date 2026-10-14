@@ -3,7 +3,7 @@
     "sourceName": "Plan_de_Mejoras_Cualificacion_v2.xlsx",
     "sheetName": "Plan de Mejoras",
     "range": "Tabla PlanMejoras",
-    "generatedAt": "2026-10-10T03:40:14.559Z",
+    "generatedAt": "2026-10-14T15:30:36.659Z",
     "totalActivities": 93,
     "totalColumns": 26,
     "minDate": "2026-10-01",
@@ -126,8 +126,8 @@
       "Producto / Entregable": "Conformación del Equipocon nómina, roles y cronograma de sesiones",
       "Medio de verificación": "Documento aprobado con la conformación del comité",
       "Criterio de aceptación (evidencia de cumplimiento)": "Equipo multidisciplinario",
-      "Prioridad": "CRÍTICA",
-      "Estado": "NO INICIADA",
+      "Prioridad": "Crítica",
+      "Estado": "No iniciada",
       "Avance (%)": 0,
       "Carga de Evidencias": "G-1",
       "Nivel de Cumplimiento": "",
@@ -1842,7 +1842,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "EF6.3",
       "Nivel de Cumplimiento": "",
-      "Observaciones": ""
+      "Observaciones": "el kakas"
     },
     {
       "_excelRow": 62,
@@ -2451,7 +2451,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "EF9.1",
       "Nivel de Cumplimiento": "",
-      "Observaciones": "PRUEBA SEPARACIÓN"
+      "Observaciones": ""
     },
     {
       "_excelRow": 83,
