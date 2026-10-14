@@ -3,7 +3,7 @@
     "sourceName": "Plan_de_Mejoras_Cualificacion_v2.xlsx",
     "sheetName": "Plan de Mejoras",
     "range": "Tabla PlanMejoras",
-    "generatedAt": "2026-10-14T15:46:59.883Z",
+    "generatedAt": "2026-10-14T15:49:31.985Z",
     "totalActivities": 93,
     "totalColumns": 26,
     "minDate": "2026-10-01",
@@ -189,7 +189,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "G-3",
       "Nivel de Cumplimiento": "",
-      "Observaciones": ""
+      "Observaciones": "d"
     },
     {
       "_excelRow": 5,
@@ -218,7 +218,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "G-4",
       "Nivel de Cumplimiento": "",
-      "Observaciones": ""
+      "Observaciones": "d"
     },
     {
       "_excelRow": 6,
@@ -247,7 +247,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "G-5",
       "Nivel de Cumplimiento": "",
-      "Observaciones": ""
+      "Observaciones": "d"
     },
     {
       "_excelRow": 7,
@@ -276,7 +276,7 @@
       "Avance (%)": 0,
       "Carga de Evidencias": "G-7",
       "Nivel de Cumplimiento": "",
-      "Observaciones": ""
+      "Observaciones": "d"
     },
     {
       "_excelRow": 8,
