@@ -244,6 +244,8 @@
     .field textarea { min-height: 112px; resize: vertical; }
     .field input[readonly] { color: var(--muted); background: #edf2f5; }
     .field small { color: var(--muted); font-size: .73rem; }
+    .evidence-link { color: var(--teal); font-weight: 700; text-decoration: underline; text-underline-offset: 2px; }
+    .evidence-link:hover { color: var(--navy); }
     .multi-select { position: relative; }
     .multi-select > summary { position: relative; min-height: 42px; padding: 9px 30px 9px 11px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 9px; color: var(--ink); background: #fff; white-space: nowrap; text-overflow: ellipsis; list-style: none; cursor: pointer; }
     .multi-select > summary::-webkit-details-marker { display: none; }
@@ -634,7 +636,20 @@
       const mobileColumns = new Set(["ID", "Indicador", "Actividad", "Responsable principal", "Fecha de fin", "Prioridad", "Estado", "Avance (%)"]);
       const dateColumns = new Set(["Fecha de inicio", "Fecha de fin"]);
       const numericColumns = new Set(["Plazo (días)", "Avance (%)"]);
-      const readOnlyColumns = new Set(["Plazo (días)"]);
+      const readOnlyColumns = new Set(["Plazo (días)", "Enlace evidencias"]);
+      const EVIDENCE_LINK_FIELD = "Enlace evidencias";
+      const EVIDENCE_BASE_URL = "https://ucacueedu-my.sharepoint.com/personal/institucional_jaac_ucacue_edu_ec/Documents/ACREDITACION INSTITUCIONAL/CUALIFICACION ACADEMICA/PLAN DE MEJORAS/";
+      function evidenceUrl(record) {
+        const raw = plain(record[EVIDENCE_LINK_FIELD]);
+        if (!raw) return "";
+        try {
+          const url = new URL(raw, EVIDENCE_BASE_URL);
+          return url.protocol === "https:" ? url.href : "";
+        } catch {
+          return "";
+        }
+      }
+      const hiddenColumns = new Set(["Enlace evidencias"]);
       const selectOptions = {
         "Valoración según el modelo": ["CUMPLE", "NO CUMPLE"],
         "Tipo de Actividad": ["INSTITUCIONAL", "ESPECÍFICA"],
@@ -652,7 +667,7 @@
         sort: { field: "", dir: "asc" },
         page: 1,
         activeView: "overview",
-        visibleColumns: new Set(seed.headers),
+        visibleColumns: new Set(seed.headers.filter(field => !hiddenColumns.has(field))),
         config: { tenantId: "", clientId: "", shareUrl: "", sheetName: "Plan de Mejoras", adminEmails: [], adminObjectIds: [] },
         graph: { accessToken: "", refreshToken: "", expiresAt: 0, driveId: "", itemId: "", fileName: "", sessionId: "", lastModified: "", accessMode: "unknown", authorizedAdmin: false, user: null },
         remoteColumnIndex: new Map(),
@@ -1009,7 +1024,7 @@
         const pages = 1;
         state.page = 1;
         const slice = sortedRecords(filtered);
-        const visible = seed.headers.filter(field => state.visibleColumns.has(field));
+        const visible = seed.headers.filter(field => !hiddenColumns.has(field) && state.visibleColumns.has(field));
         const actionHeader = isEditor() ? `<th scope="col">Acción</th>` : "";
         const header = `<thead><tr>${visible.map(field => `<th scope="col" aria-sort="${state.sort.field === field ? (state.sort.dir === "asc" ? "ascending" : "descending") : "none"}"><button type="button" class="sort-btn" data-sort="${esc(field)}" title="Ordenar por ${esc(field)}">${esc(field)}<span aria-hidden="true">${state.sort.field === field ? (state.sort.dir === "asc" ? " ▲" : " ▼") : ""}</span></button></th>`).join("")}${actionHeader}</tr></thead>`;
         const body = slice.length ? `<tbody>${slice.map(record => `<tr>${visible.map(field => {
@@ -1019,11 +1034,12 @@
           if (field === "Prioridad") content = `<span class="badge ${norm(value) === "critica" ? "red" : norm(value) === "alta" ? "amber" : ""}">${esc(value)}</span>`;
           if (field === "Estado") content = `<span class="badge ${activityAdvance(record) >= 100 ? "green" : activityAdvance(record) > 0 ? "amber" : "red"}">${esc(value)}</span>`;
           if (field === "Nivel de Cumplimiento") content = `<span class="badge ${norm(value) === "cumple" ? "green" : norm(value) === "no cumple" ? "red" : ""}">${esc(value)}</span>`;
+          if (field === "Evidencias" && evidenceUrl(record)) content = `<a class="evidence-link" href="${esc(evidenceUrl(record))}" target="_blank" rel="noopener noreferrer" title="Abrir evidencias en OneDrive">${esc(plain(record.Evidencias) || "Ver evidencias")}</a>`;
           return `<td class="${cls}" data-label="${esc(field)}">${content}</td>`;
         }).join("")}${isEditor() ? `<td><div class="row-actions"><button class="edit-link" type="button" data-edit-row="${record._excelRow}">Editar</button></div></td>` : ""}</tr>`).join("")}</tbody>` : `<tbody><tr><td colspan="${visible.length + (isEditor() ? 1 : 0)}" class="empty">No existen actividades que coincidan con la búsqueda y los filtros.</td></tr></tbody>`;
         $("#activitiesTable").innerHTML = `<table>${header}${body}</table>`;
         $("#activitiesTitle").textContent = isEditor() ? "Consulta y edición de actividades" : "Consulta de actividades";
-        $("#activitiesHelp").textContent = isEditor() ? `La búsqueda revisa las ${seed.headers.length} columnas. Selecciona una fila para actualizarla.` : `La búsqueda revisa las ${seed.headers.length} columnas. Tu cuenta tiene acceso de solo lectura.`;
+        $("#activitiesHelp").textContent = isEditor() ? `La búsqueda revisa las ${seed.headers.filter(field => !hiddenColumns.has(field)).length} columnas. Selecciona una fila para actualizarla.` : `La búsqueda revisa las ${seed.headers.filter(field => !hiddenColumns.has(field)).length} columnas. Tu cuenta tiene acceso de solo lectura.`;
         $("#resultCount").textContent = `${filtered.length} ${filtered.length === 1 ? "actividad" : "actividades"}`;
         const active = [state.search ? `búsqueda: “${state.search}”` : "", ...Object.values(state.filters).map(value => Array.isArray(value) ? value.join(" o ") : value).filter(Boolean)].filter(Boolean);
         $("#filterSummary").textContent = active.length ? active.join(" · ") : "Sin filtros";
@@ -1031,7 +1047,7 @@
         $("#prevPage").disabled = state.page <= 1;
         $("#nextPage").disabled = state.page >= pages;
         writeUrlState();
-        $("#columnButton").textContent = `${visible.length} de ${seed.headers.length} columnas`;
+        $("#columnButton").textContent = `${visible.length} de ${seed.headers.filter(field => !hiddenColumns.has(field)).length} columnas`;
       }
 
       function barCard(title, subtitle, entries, color = "") {
@@ -1094,8 +1110,9 @@
 
       function renderQuality() {
         const issues = qualityIssues();
-        const missingCells = seed.headers.reduce((sum, field) => sum + state.records.filter(r => r[field] === null || plain(r[field]) === "").length, 0);
-        const totalCells = state.records.length * seed.headers.length;
+        const qualityHeaders = seed.headers.filter(field => field !== EVIDENCE_LINK_FIELD);
+        const missingCells = qualityHeaders.reduce((sum, field) => sum + state.records.filter(r => r[field] === null || plain(r[field]) === "").length, 0);
+        const totalCells = state.records.length * qualityHeaders.length;
         const completeness = totalCells ? 1 - missingCells / totalCells : 0;
         const duplicateCount = state.records.length - unique(state.records.map(r => r.ID)).length;
         $("#qualitySummary").innerHTML = [[`${percentFmt.format(completeness*100)}%`,"Completitud global"],[issues.length,"Controles con observación"],[duplicateCount,"ID duplicados"]].map(([v,l]) => `<div class="data-stat"><strong>${esc(v)}</strong><span>${esc(l)}</span></div>`).join("");
@@ -1176,7 +1193,7 @@
         return /[";\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
       }
       function exportCsv() {
-        const headers = seed.headers.filter(field => state.visibleColumns.has(field));
+        const headers = seed.headers.filter(field => !hiddenColumns.has(field) && state.visibleColumns.has(field));
         const rows = sortedRecords(filteredRecords());
         if (!rows.length) { toast("No hay actividades para exportar con los filtros actuales.", "error"); return; }
         const value = (record, field) => field === "Avance (%)" ? activityAdvance(record) :  record[field];
@@ -1211,7 +1228,7 @@
         const sections = [
           ["Identificación y modelo", seed.headers.slice(0,12)],
           ["Planificación y evidencia", seed.headers.slice(12,23)],
-          ["Seguimiento", seed.headers.slice(23)]
+          ["Seguimiento", seed.headers.slice(23).filter(field => !hiddenColumns.has(field))]
         ];
         $("#editBody").innerHTML = sections.map(([title,fields]) => `<section class="form-section"><h3>${esc(title)}</h3><div class="form-grid">${fields.map(field => fieldControl(field, record[field])).join("")}</div></section>`).join("");
         $("#editSaveHint").textContent = "Al guardar se actualizará el Excel conectado.";
@@ -1266,7 +1283,7 @@
       }
 
       function openColumns() {
-        $("#columnOptions").innerHTML = seed.headers.map(field => `<label style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff"><input type="checkbox" value="${esc(field)}" ${state.visibleColumns.has(field) ? "checked" : ""}><span>${esc(field)}</span></label>`).join("");
+        $("#columnOptions").innerHTML = seed.headers.filter(field => !hiddenColumns.has(field)).map(field => `<label style="display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff"><input type="checkbox" value="${esc(field)}" ${state.visibleColumns.has(field) ? "checked" : ""}><span>${esc(field)}</span></label>`).join("");
         $("#columnDialog").showModal();
       }
 
@@ -1283,7 +1300,7 @@
         seed = withoutPhase(data);
         publishedSignature = signature;
         state.records = data.records.map(normalizeRecord);
-        state.visibleColumns = new Set(seed.headers);
+        state.visibleColumns = new Set(seed.headers.filter(field => !hiddenColumns.has(field)));
         state.page = 1;
         snapshotBase();
         if (notify) {
@@ -1648,6 +1665,7 @@
         $("#priorityAlerts").addEventListener("click", openDeadline);
         $("#priorityAlerts").addEventListener("keydown", openDeadline);
         $("#activitiesTable").addEventListener("click", event => {
+          if (event.target.closest("a.evidence-link")) return;
           const sortButton = event.target.closest("[data-sort]");
           if (sortButton) {
             const field = sortButton.dataset.sort;
