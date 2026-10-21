@@ -3,7 +3,7 @@
     "sourceName": "Plan_de_Mejoras_Cualificacion_v2.xlsx",
     "sheetName": "Plan de Mejoras",
     "range": "Tabla PlanMejoras",
-    "generatedAt": "2026-10-21T15:51:11.447Z",
+    "generatedAt": "2026-10-21T15:51:26.686Z",
     "totalActivities": 93,
     "totalColumns": 27,
     "minDate": "2026-10-01",
@@ -254,7 +254,7 @@
       "Evidencias": "G-5",
       "Nivel de Cumplimiento": "",
       "Observaciones": "",
-      "Enlace evidencias": ""
+      "Enlace evidencias": "G-05"
     },
     {
       "_excelRow": 7,
