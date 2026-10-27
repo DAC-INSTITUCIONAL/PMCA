@@ -703,7 +703,7 @@
       function isoToExcelDate(iso) { const date = parseDate(iso); return date ? Math.round((date.getTime() - Date.UTC(1899, 11, 30)) / 86400000) : ""; }
       function colLetter(index) { let n = index + 1, out = ""; while (n) { const r = (n - 1) % 26; out = String.fromCharCode(65 + r) + out; n = Math.floor((n - 1) / 26); } return out; }
       function activityAdvance(record) { const value = Number(record["Avance (%)"]); return Number.isFinite(value) ? clamp(value, 0, 100) : 0; }
-      function operationalLevel(value) { if (value >= 100) return "Completada"; if (value >= 75) return "Avance alto"; if (value >= 50) return "Avance medio"; if (value > 0) return "Avance inicial"; return "No iniciada"; }
+      function operationalLevel(value) { if (value >= 100) return "Concluida"; if (value >= 75) return "Avance alto"; if (value >= 50) return "Avance medio"; if (value > 0) return "Avance inicial"; return "No iniciada"; }
       function isOverdue(record) { const end = parseDate(record["Fecha de fin"]); if (!end || activityAdvance(record) >= 100) return false; const today = new Date(); const utcToday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())); return end < utcToday; }
       // Usa el valor calculado por el Excel; si viene vacío, replica su fórmula (días hábiles con feriados).
       function expectedAdvance(record) {
@@ -917,7 +917,7 @@
         ring.style.setProperty("--value", `${overall * 3.6}deg`);
         $("strong", ring).textContent = `${percentFmt.format(overall)}%`;
         const levels = [
-          ["Completadas", records.filter(r => activityAdvance(r) >= 100).length, "green"],
+          ["Concluidas", records.filter(r => activityAdvance(r) >= 100).length, "green"],
           ["Avance alto", records.filter(r => activityAdvance(r) >= 75 && activityAdvance(r) < 100).length, "teal"],
           ["Avance medio", records.filter(r => activityAdvance(r) >= 50 && activityAdvance(r) < 75).length, "amber"],
           ["Avance inicial", records.filter(r => activityAdvance(r) > 0 && activityAdvance(r) < 50).length, "amber"],
@@ -1104,7 +1104,7 @@
         const monthEntries = [...months.entries()].sort((a,b) => a[0].localeCompare(b[0])).map(([month,count]) => [month === "Sin fecha" ? month : new Intl.DateTimeFormat("es-EC", {month:"short",year:"numeric",timeZone:"UTC"}).format(new Date(`${month}-01T00:00:00Z`)), count]);
         const trace = state.records.filter(r => plain(r["Medio de verificación"]) && plain(r["Criterio de aceptación (evidencia de cumplimiento)"])).length;
         const progressLevels = [
-          ["Completadas", state.records.filter(r => activityAdvance(r) >= 100).length, "var(--green)"],
+          ["Concluidas", state.records.filter(r => activityAdvance(r) >= 100).length, "var(--green)"],
           ["Iniciadas / en progreso", state.records.filter(r => activityAdvance(r) > 0 && activityAdvance(r) < 100).length, "var(--amber)"],
           ["No iniciadas", state.records.filter(r => activityAdvance(r) === 0).length, "var(--red)"]
         ];
