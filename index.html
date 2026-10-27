@@ -632,12 +632,12 @@
       const PAGE_SIZE = 25;
       const graphBase = "https://graph.microsoft.com/v1.0";
       const oauthScopes = "openid profile offline_access User.Read Files.ReadWrite";
-      const keyColumns = ["ID", "Criterio", "Indicador", "Elemento fundamental", "Actividad", "Responsable principal", "Fecha de inicio", "Fecha de fin", "Prioridad", "Estado", "Avance (%)", "Carga de Evidencias", "Nivel de Cumplimiento", "Observaciones"];      const longColumns = new Set(["Descripción del EF", "Fuente de información", "Descripción del Hallazgo", "Descripción de la actividad", "Medida de mitigación", "Producto / Entregable", "Medio de verificación", "Criterio de aceptación (evidencia de cumplimiento)", "Observaciones"]);
+      const keyColumns = ["ID", "Criterio", "Indicador", "Elemento fundamental", "Actividad", "Responsable principal", "Fecha de inicio", "Fecha de fin", "Prioridad", "Estado", "Avance (%)", "Avance esperado (%)", "Semáforo de avance", "Carga de Evidencias", "Nivel de Cumplimiento", "Observaciones"];      const longColumns = new Set(["Descripción del EF", "Fuente de información", "Descripción del Hallazgo", "Descripción de la actividad", "Medida de mitigación", "Producto / Entregable", "Medio de verificación", "Criterio de aceptación (evidencia de cumplimiento)", "Observaciones"]);
       const mediumColumns = new Set(["Criterio", "Indicador", "Actividad", "Responsable principal", "Carga de Evidencias"]);
       const mobileColumns = new Set(["ID", "Indicador", "Actividad", "Responsable principal", "Fecha de fin", "Prioridad", "Estado", "Avance (%)"]);
       const dateColumns = new Set(["Fecha de inicio", "Fecha de fin"]);
-      const numericColumns = new Set(["Plazo (días)", "Avance (%)"]);
-      const readOnlyColumns = new Set(["Plazo (días)", "Enlace evidencias"]);
+      const numericColumns = new Set(["Plazo (días)", "Avance (%)", "Avance esperado (%)"]);
+      const readOnlyColumns = new Set(["Plazo (días)", "Avance esperado (%)", "Semáforo de avance", "Enlace evidencias"]);
       const EVIDENCE_LINK_FIELD = "Enlace evidencias";
       const EVIDENCE_BASE_URL = "https://ucacueedu-my.sharepoint.com/personal/institucional_jaac_ucacue_edu_ec/Documents/ACREDITACION INSTITUCIONAL/CUALIFICACION ACADEMICA/PLAN DE MEJORAS/";
       function evidenceUrl(record) {
@@ -655,7 +655,7 @@
         "Valoración según el modelo": ["CUMPLE", "NO CUMPLE"],
         "Tipo de Actividad": ["INSTITUCIONAL", "ESPECÍFICA"],
         "Prioridad": ["CRÍTICA", "ALTA", "MEDIA", "BAJA"],
-        "Estado": ["NO INICIADA", "EN PROCESO", "COMPLETADA", "REPROGRAMADA", "SUSPENDIDA"],
+        "Estado": ["NO INICIADA", "EN EJECUCIÓN", "CONCLUIDA", "REPROGRAMADA", "DESCARTADA"],
         "Nivel de Cumplimiento": ["", "CUMPLE", "NO CUMPLE", "EN REVISIÓN", "NO APLICA"]
       };
 
@@ -705,13 +705,21 @@
       function activityAdvance(record) { const value = Number(record["Avance (%)"]); return Number.isFinite(value) ? clamp(value, 0, 100) : 0; }
       function operationalLevel(value) { if (value >= 100) return "Completada"; if (value >= 75) return "Avance alto"; if (value >= 50) return "Avance medio"; if (value > 0) return "Avance inicial"; return "No iniciada"; }
       function isOverdue(record) { const end = parseDate(record["Fecha de fin"]); if (!end || activityAdvance(record) >= 100) return false; const today = new Date(); const utcToday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())); return end < utcToday; }
+      // Usa el valor calculado por el Excel; si viene vacío, replica su fórmula (días hábiles con feriados).
       function expectedAdvance(record) {
-        const start = parseDate(record["Fecha de inicio"]), end = parseDate(record["Fecha de fin"]);
-        if (!start || !end || end < start) return null;
-        const now = new Date(), today = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-        if (today <= start) return 0;
+        const raw = plain(record["Avance esperado (%)"]);
+        const value = Number(raw);
+        if (raw !== "" && Number.isFinite(value)) return clamp(value, 0, 100);
+        const status = norm(record.Estado);
+        if (status === "descartada") return null;
+        if (status === "concluida") return 100;
+        const start = plain(record["Fecha de inicio"]), end = plain(record["Fecha de fin"]);
+        if (!parseDate(start) || !parseDate(end) || end < start) return null;
+        const now = new Date(), today = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())).toISOString().slice(0,10);
+        if (today < start) return 0;
         if (today >= end) return 100;
-        return (today - start) / (end - start) * 100;
+        const total = businessDays(start, end) - 1;
+        return total > 0 ? clamp((businessDays(start, today) - 1) / total * 100, 0, 100) : 100;
       }
       function scheduleStats(rows) {
         const dated = rows.filter(r => expectedAdvance(r) !== null);
@@ -719,12 +727,14 @@
         const expected = dated.length ? avg(dated.map(expectedAdvance)) : null;
         return { real, expected, gap: expected === null ? null : real - expected, overdue: rows.filter(isOverdue).length };
       }
-      function gapBadge(gap) {
+      function gapBadge(gap, expected = null) {
         if (gap === null) return `<span class="badge">Sin fechas</span>`;
-        const cls = gap >= -5 ? "green" : gap >= -20 ? "amber" : "red";
-        const text = gap >= -5 ? "En ritmo" : gap >= -20 ? "Rezago leve" : "Rezago alto";
-        return `<span class="badge ${cls}" title="Avance real menos avance esperado">${text} (${gap > 0 ? "+" : ""}${percentFmt.format(gap)} pts)</span>`;
+        if (expected === 0 && gap <= 0) return `<span class="badge" title="Ninguna actividad debía haber iniciado a la fecha">Por iniciar</span>`;
+        const cls = gap >= 0 ? "green" : gap >= -20 ? "amber" : "red";
+        const text = gap >= 0 ? "En plazo" : gap >= -20 ? "Atención" : "Retrasada";
+        return `<span class="badge ${cls}" title="Avance real menos avance esperado (mismos cortes que el semáforo del Excel)">${text} (${gap > 0 ? "+" : ""}${percentFmt.format(gap)} pts)</span>`;
       }
+      function semaphoreClass(value) { const v = norm(value); return v === "concluida" || v === "en plazo" ? "green" : v === "atencion" ? "amber" : v === "retrasada" ? "red" : ""; }
       function progressBar(real, expected, color) {
         return `<div class="bar-track has-mark"><div class="bar-fill ${color}" style="width:${real}%"></div>${expected === null ? "" : `<div class="bar-mark" style="left:calc(${expected}% - 1px)" title="Esperado a hoy: ${percentFmt.format(expected)}%"></div>`}</div>`;
       }
@@ -941,7 +951,7 @@
             <div class="mini-stat"><span>Actividades</span><strong>${item.activities}</strong></div>
             <div class="mini-stat"><span>EF únicos</span><strong>${item.ef || "—"}</strong></div>
             <div class="mini-stat"><span>Críticas</span><strong>${item.critical}</strong></div>
-            <div class="indicator-progress"><span class="badge ${item.advance >= 100 ? "green" : item.advance > 0 ? "amber" : "red"}">${esc(level)}</span>${progressBar(item.advance, item.schedule.expected, "teal")}<small class="muted">Real ${percentFmt.format(item.advance)}%${item.schedule.expected === null ? "" : ` · Esperado ${percentFmt.format(item.schedule.expected)}%`}</small>${gapBadge(item.schedule.gap)}</div>
+            <div class="indicator-progress"><span class="badge ${item.advance >= 100 ? "green" : item.advance > 0 ? "amber" : "red"}">${esc(level)}</span>${progressBar(item.advance, item.schedule.expected, "teal")}<small class="muted">Real ${percentFmt.format(item.advance)}%${item.schedule.expected === null ? "" : ` · Esperado ${percentFmt.format(item.schedule.expected)}%`}</small>${gapBadge(item.schedule.gap, item.schedule.expected)}</div>
             <span class="badge ${badgeClass}">${esc(item.compliance)}</span>
           </article>`;
         }).join("") : `<div class="card empty">Inicia sesión con Microsoft 365 para cargar los indicadores.</div>`;
@@ -969,7 +979,7 @@
         const sortField = field || (state.filters.deadline ? "Fecha de fin" : "");
         if (!sortField) return records;
         const factor = dir === "desc" && field ? -1 : 1;
-        const key = r => sortField === "Avance (%)" ? activityAdvance(r) : numericColumns.has(sortField) ? (Number.isFinite(Number(r[sortField])) && plain(r[sortField]) !== "" ? Number(r[sortField]) : null) : plain(r[sortField]);
+        const key = r => sortField === "Avance (%)" ? activityAdvance(r) : sortField === "Avance esperado (%)" ? expectedAdvance(r) : numericColumns.has(sortField) ? (Number.isFinite(Number(r[sortField])) && plain(r[sortField]) !== "" ? Number(r[sortField]) : null) : plain(r[sortField]);
         return [...records].sort((a, b) => {
           const ka = key(a), kb = key(b);
           if ((ka === null || ka === "") !== (kb === null || kb === "")) return ka === null || ka === "" ? 1 : -1;
@@ -1015,6 +1025,7 @@
         const value = record[field];
         if (dateColumns.has(field)) return fmtDate(value);
         if (field === "Avance (%)") return `${percentFmt.format(activityAdvance(record))}%`;
+        if (field === "Avance esperado (%)") { const expected = expectedAdvance(record); return expected === null ? "—" : `${percentFmt.format(expected)}%`; }
         if (field === "Plazo (días)") return value ?? "—";
         return plain(value) || "—";
       }
@@ -1034,6 +1045,7 @@
           let content = `<span class="cell-clamp" title="${esc(value)}">${esc(value)}</span>`;
           if (field === "Prioridad") content = `<span class="badge ${norm(value) === "critica" ? "red" : norm(value) === "alta" ? "amber" : ""}">${esc(value)}</span>`;
           if (field === "Estado") content = `<span class="badge ${activityAdvance(record) >= 100 ? "green" : activityAdvance(record) > 0 ? "amber" : "red"}">${esc(value)}</span>`;
+          if (field === "Semáforo de avance") content = `<span class="badge ${semaphoreClass(value)}">${esc(value)}</span>`;
           if (field === "Nivel de Cumplimiento") content = `<span class="badge ${norm(value) === "cumple" ? "green" : norm(value) === "no cumple" ? "red" : ""}">${esc(value)}</span>`;
           if (field === "Evidencias" && evidenceUrl(record)) content = `<a class="evidence-link" href="${esc(evidenceUrl(record))}" target="_blank" rel="noopener noreferrer" title="Abrir evidencias en OneDrive">${esc(plain(record.Evidencias) || "Ver evidencias")}</a>`;
           return `<td class="${cls}" data-label="${esc(field)}">${content}</td>`;
@@ -1197,7 +1209,7 @@
         const headers = seed.headers.filter(field => !hiddenColumns.has(field) && state.visibleColumns.has(field));
         const rows = sortedRecords(filteredRecords());
         if (!rows.length) { toast("No hay actividades para exportar con los filtros actuales.", "error"); return; }
-        const value = (record, field) => field === "Avance (%)" ? activityAdvance(record) :  record[field];
+        const value = (record, field) => field === "Avance (%)" ? activityAdvance(record) : field === "Avance esperado (%)" ? (expectedAdvance(record) === null ? "" : Math.round(expectedAdvance(record) * 10) / 10) : record[field];
         const lines = [headers.map(csvCell).join(";"), ...rows.map(record => headers.map(field => csvCell(value(record, field))).join(";"))];
         const blob = new Blob(["\ufeff" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
         const link = document.createElement("a");
