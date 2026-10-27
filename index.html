@@ -861,7 +861,7 @@
         if (invalidAdvance.length) issues.push({ severity: "critical", title: "Porcentajes de avance fuera de rango", detail: "El avance debe estar entre 0 y 100.", count: invalidAdvance.length });
         const dateErrors = state.records.filter(r => parseDate(r["Fecha de fin"]) < parseDate(r["Fecha de inicio"]));
         if (dateErrors.length) issues.push({ severity: "critical", title: "Fechas finales anteriores al inicio", detail: `Filas Excel: ${dateErrors.map(r => r._excelRow).join(", ")}.`, count: dateErrors.length });
-        const statusMismatch = state.records.filter(r => (norm(r.Estado) === "no iniciada" && activityAdvance(r) > 0) || (norm(r.Estado) === "completada" && activityAdvance(r) < 100));
+        const statusMismatch = state.records.filter(r => (norm(r.Estado) === "no iniciada" && activityAdvance(r) > 0) || (norm(r.Estado) === "concluida" && activityAdvance(r) < 100));
         if (statusMismatch.length) issues.push({ severity: "warning", title: "Estado y avance no coinciden", detail: "Revisa actividades declaradas como no iniciadas con avance, o completadas sin 100%.", count: statusMismatch.length });
         const noCompliance = state.records.filter(r => !plain(r["Nivel de Cumplimiento"]));
         if (noCompliance.length) issues.push({ severity: "warning", title: "Nivel de cumplimiento sin valorar", detail: "La columna está vacía. Debe completarse manualmente y no se infiere del porcentaje de avance.", count: noCompliance.length });
@@ -905,7 +905,7 @@
         const manualIndicators = indicators.filter(i => i.compliance !== "Sin valoración").length;
         const kpis = [
           [records.length, "Actividades", `${records.length} filas de seguimiento`, ""],
-          [`${percentFmt.format(overall)}%`, "Avance promedio", `${completed} completadas${schedule.expected === null ? "" : ` · esperado ${percentFmt.format(schedule.expected)}%`}`, "teal"],
+          [`${percentFmt.format(overall)}%`, "Avance promedio", `${completed} concluidas${schedule.expected === null ? "" : ` · esperado ${percentFmt.format(schedule.expected)}%`}`, "teal"],
           [indicators.length, "Indicadores", `${indicators.length} agrupaciones detectadas`, ""],
           [critical, "Prioridad crítica", `${percentFmt.format(records.length ? critical / records.length * 100 : 0)}% del plan`, "red"],
           [overdue, "Vencidas", overdue ? "Requieren acción" : "Sin vencimientos al corte", overdue ? "red" : "green"],
