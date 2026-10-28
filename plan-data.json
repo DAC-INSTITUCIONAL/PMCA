@@ -10,7 +10,7 @@
     "maxDate": "2027-04-30",
     "duplicateIds": [],
     "blankHeaderColumns": [],
-    "formulaIssue": "Las fórmulas de Plazo (días) usan una referencia externa [1]Parametros y deben corregirse a Parametros!$A$2:$A$9."
+    "formulaIssue": null
   },
   "headers": [
     "ID",
@@ -107,6 +107,10 @@
     {
       "date": "2027-02-09",
       "detail": "Carnaval"
+    },
+    {
+      "date": "2027-03-26",
+      "detail": "Viernes Santo"
     }
   ],
   "records": [
